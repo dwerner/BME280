@@ -212,7 +212,7 @@ impl<T: I2CDevice<Error = LinuxI2CError> + Sized> Bme280<T> {
         let xlsb = try!(dev.smbus_read_byte_data(Register::TemperatureData2 as u8)) as u32;
 
         let raw = ((msb << 16) | (lsb << 8) | xlsb) >> 4;
-        println!("raw temp: {}", raw as f64);
+        //println!("raw temp: {}", raw as f64);
         Ok(raw as f64)
     }
 
@@ -224,7 +224,7 @@ impl<T: I2CDevice<Error = LinuxI2CError> + Sized> Bme280<T> {
         let var1 = (ut / 16384.0 - t1 / 1024.0) * t2;
         let var2 = ((ut / 131072.0 - t1 / 8192.0) * (ut / 131072.0 - t1 / 8192.0)) * t3;
         let t_fine = var1 + var2;
-        println!("t_fine: {}", t_fine);
+        //println!("t_fine: {}", t_fine);
         Ok(t_fine)
     }
 
@@ -236,7 +236,7 @@ impl<T: I2CDevice<Error = LinuxI2CError> + Sized> Bme280<T> {
         let lsb = try!(dev.smbus_read_byte_data(Register::PressureData1 as u8)) as u32;
         let xlsb = try!(dev.smbus_read_byte_data(Register::PressureData2 as u8)) as u32;
         let raw = ((msb << 16) | (lsb << 8) | xlsb) >> 4;
-        println!("raw pressure: {}", raw);
+        //println!("raw pressure: {}", raw);
         Ok(raw)
     }
 }
