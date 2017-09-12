@@ -84,12 +84,8 @@ impl<T: I2CDevice<Error = LinuxI2CError> + Sized> Bme280<T> {
 
     /// Reads the current Fahrenheit temperature value from the sensor
     pub fn read_temperature(&self) -> Result<f64, LinuxI2CError> {
-        // Technically I'm skipping the step of casting to an integer, which would
-        // result in rounding down of the var1 and var2 that were used in the original
-        // calculation of t_fine:
-        let celcius = try!(self.calc_t_fine()) / 5120.0;
-        let fahrenheit = celcius * 1.8 + 32.0;
-        Ok(fahrenheit)
+        let c = try!(self.calc_t_fine()) / 5120.0;
+        Ok(c)
     }
 
     /// Reads the current barometric pressure in InHg from the sensor
@@ -135,14 +131,14 @@ impl<T: I2CDevice<Error = LinuxI2CError> + Sized> Bme280<T> {
         let h6 = self.calibration.h6 as f64;
 
         let adc = try!(self.read_raw_humidity());
-        println!("Raw humidity (adc) is: {}", adc);
+        // println!("Raw humidity (adc) is: {}", adc);
         let h = try!(self.calc_t_fine()) - 76800.0;
-        println!("h: {}", h);
+        // println!("h: {}", h);
         let h_2 = (adc - (h4 * 64.0 + h5 / 16384.8 * h)) *
                   (h2 / 65536.0 * (1.0 + h6 / 67108864.0 * h * (1.0 + h3 / 67108864.0 * h)));
-        println!("h_2: {}", h_2);
+        // println!("h_2: {}", h_2);
         let h_3 = h_2 * (1.0 - h1 * h_2 / 524288.0);
-        println!("h_3: {}", h_3);
+        // println!("h_3: {}", h_3);
         match h_3 {
             x if x > 100.0 => Ok(x),
             x if x < 0.0 => Ok(x),
